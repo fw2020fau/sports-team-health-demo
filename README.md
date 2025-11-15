@@ -1,162 +1,125 @@
 # Sports Team Health Performance Tracking (Demo App)
 
-# Overview
+## 📌 Overview
+A simple **Node.js / Express backend** built for a classroom project.  
+This demo app monitors and manages **health and vital signs** for sports teams in real time.  
+All data is **in-memory** to keep the focus on API logic and role-based workflows.
 
-# A simple Node.js/Express backend for a classroom project: monitor and manage health/vitals for sports teams in real-time, demonstrating features from your class documentation and diagrams. Data is in-memory, focusing on API logic and role-based workflows for demo purposes.
+---
 
-# 
+## 🚀 Features
 
-# Features
+### 🔐 User Authentication & Roles
+- Trainer  
+- Coach  
+- Player  
+- Admin  
+*(All using hardcoded sample accounts)*
 
-# User Authentication \& Roles: Trainer, Coach, Player, Admin (with hardcoded sample accounts)
+### 🩺 Player Dashboard
+- View all players  
+- Trainers can update player status  
 
-# 
+### 📝 Incident Logging
+- Trainers log new incidents  
+- All roles can view incident history  
 
-# Player Dashboard: List and update player health/status
+### 📊 Vital Signs Tracking
+- Trainers record HR, temperature, O₂ levels  
+- Every role can access vitals history per player  
 
-# 
+### ⚠️ Automatic Alerts
+- Server logs alerts for dangerous values  
+  - e.g., very high/low heart rate, high temperature
 
-# Incident Logging: Trainers log new health incidents; all roles can view logs
+### 🧍 Player Self-Reporting
+- Players submit fatigue score
 
-# 
+### ⏳ Session Timeout
+- **30 minutes** inactivity limit via `express-session`
 
-# Vital Signs Tracking: Trainers record HR/temp/o2 for any player; all roles can get per-player vitals history
+---
 
-# 
+## ⚡ Quick Start
 
-# Automatic Alerts: Server logs alerts if danger vital sign values detected (e.g., high/low HR, high temp)
-
-# 
-
-# Player Self-Reporting: Fatigue value submission
-
-# 
-
-# Session Timeout: 30 min inactivity limit with Express-session
-
-
-
-Quick Start
-
-Clone and enter the repo:
-
-
-
-text
-
+### 1️⃣ Clone and enter the repo:
+```bash
 git clone https://github.com/yourusername/sports-team-health-demo.git
-
 cd sports-team-health-demo/backend
+```
 
-Install dependencies:
-
-
-
-text
-
+### 2️⃣ Install dependencies:
+```bash
 npm install
+```
 
-Run the backend server:
-
-
-
-text
-
+### 3️⃣ Run the backend server:
+```bash
 node server.js
+```
 
-Sample Users
+---
 
-Trainer: trainer1 / trainerpass
+## 👥 Sample Users
 
+| Role    | Username   | Password     |
+|---------|------------|---------------|
+| Trainer | trainer1   | trainerpass   |
+| Coach   | coach1     | coachpass     |
+| Player  | player1    | playerpass    |
+| Admin   | admin1     | adminpass     |
 
+---
 
-Coach: coach1 / coachpass
+## 🔗 API Endpoints (Main Examples)
 
+| Route                     | Method | Purpose                      | Who Can Use              |
+|---------------------------|--------|------------------------------|---------------------------|
+| `/login`                  | POST   | Log in                       | Everyone                  |
+| `/logout`                 | POST   | Log out                      | Everyone                  |
+| `/players`                | GET    | List all players             | All roles                 |
+| `/players/:id/status`     | PATCH  | Update player status         | Trainer                   |
+| `/incidents`              | POST   | Log new incident             | Trainer                   |
+| `/incidents`              | GET    | View all incidents           | All roles                 |
+| `/vitals`                 | POST   | Record new vitals            | Trainer                   |
+| `/players/:id/vitals`     | GET    | View player vitals history   | All roles                 |
+| `/alerts`                 | GET    | List all alerts              | Trainer, Coach, Admin     |
+| `/dashboard`              | GET    | Team dashboard               | All roles                 |
+| `/players/:id/fatigue`    | POST   | Player submits fatigue        | Player                    |
 
+Use **Postman** to test the API.  
+See comments inside `server.js` for explanation of workflows.
 
-Player: player1 / playerpass
+---
 
-
-
-Admin: admin1 / adminpass
-
-
-
-API Endpoints (Main Examples)
-
-Route	Method	Purpose	Who Can Use
-
-/login	POST	Log in	Everyone
-
-/logout	POST	Log out	Everyone
-
-/players	GET	List all players	All roles
-
-/players/:id/status	PATCH	Update status	Trainer
-
-/incidents	POST	Log new incident	Trainer
-
-/incidents	GET	View all incidents	All roles
-
-/vitals	POST	Record new vitals	Trainer
-
-/players/:id/vitals	GET	See player vitals history	All roles
-
-/alerts	GET	List all alerts	Trainer, Coach, Admin
-
-/dashboard	GET	Team dashboard	All roles
-
-/players/:id/fatigue	POST	Player reports fatigue	Player
-
-Use Postman to test; see comments and docs in server.js for details.
-
-
-
-Folder Structure
-
-text
-
+## 📁 Folder Structure
+```text
 sports-team-health-demo/
-
 ├── backend/
-
 │   ├── server.js
-
 │   └── package.json
+├── frontend/        (placeholder for UI demo)
+└── README.md
+```
 
-├── frontend/     (placeholder for demo UI)
+---
 
-├── README.md
+## 🎓 Class Demo Tips
+- Log in as **trainer** in Postman  
+- Demonstrate each route from your class documentation  
+- Trigger an alert by logging an unsafe HR/temperature value  
+- Explain how routes correspond to your **UML diagrams** and **requirements**
 
-Class Demo Tips
+---
 
-Login as trainer in Postman, show each route in the docs, log a vital out-of-range to trigger an alert
+## ⚠️ Notes & Limitations
+- All data resets on server restart (**in-memory**)  
+- No team or admin CRUD (hardcoded roles & players)  
+- No database & no production authentication  
+- For educational demo use only — **not real medical software**
 
+---
 
-
-Narrate how the routes map to system requirements and diagrams for your class
-
-
-
-Notes \& Limitations
-
-Data is not persistent (in-memory only; resets on server restart)
-
-
-
-No full admin/team CRUD; roles, players, sample data are all hardcoded for demonstration
-
-
-
-Ready for simple static frontend (e.g., with HTML/JavaScript) or Postman demo
-
-
-
-No database or production-ready security—educational demonstration only
-
-
-
-For classroom demo and documentation only. Not for real medical or safety use.
-
-
-
+## ✔️ Disclaimer
+This backend is intended **only for classroom demonstration and documentation.**
+Not for real medical or athletic safety applications.
