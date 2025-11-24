@@ -64,15 +64,19 @@ function showLogin() {
           Password
           <input type="password" name="password" required />
         </label>
+        <label>
+          Player ID (players only)
+          <input type="number" name="playerId" />
+        </label>
         <button type="submit">Log In</button>
       </form>
       <div class="demo-users">
         <p><strong>Demo accounts:</strong></p>
         <ul>
-          <li>Trainer — <code>trainer1 / trainer1</code></li>
-          <li>Coach — <code>coach1 / coach1</code></li>
-          <li>Player — <code>player1 / player1</code></li>
-          <li>Admin — <code>admin1 / admin1</code></li>
+          <li>Trainer — <code>trainer / trainer</code></li>
+          <li>Coach — <code>coach / coach</code></li>
+          <li>Player — <code>player / player</code></li>
+          <li>Admin — <code>admin / admin</code></li>
         </ul>
       </div>
     </div>
@@ -84,11 +88,17 @@ function showLogin() {
     const fd = new FormData(form);
     const username = fd.get('username');
     const password = fd.get('password');
+    const playerId = fd.get('playerId');
+
+    const body = { username, password };
+    if (playerId) {
+      body.playerId = playerId;
+    }
 
     try {
       const result = await fetchJSON('/login', {
         method: 'POST',
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(body),
       });
       showDashboard(result.user);
     } catch (err) {
@@ -488,6 +498,7 @@ async function loadIncidents(container) {
         <td>${i.playerId}</td>
         <td>${i.type}</td>
         <td>${i.severity}</td>
+        <td>${i.notes || ''}</td>
         <td>${i.createdBy}</td>
         <td>${new Date(i.createdAt).toLocaleString()}</td>
       </tr>
@@ -498,7 +509,13 @@ async function loadIncidents(container) {
       <table>
         <thead>
           <tr>
-            <th>ID</th><th>Player</th><th>Type</th><th>Severity</th><th>Logged By</th><th>Time</th>
+            <th>ID</th>
+            <th>Player</th>
+            <th>Type</th>
+            <th>Severity</th>
+            <th>Notes</th>
+            <th>Logged By</th>
+            <th>Time</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -508,6 +525,7 @@ async function loadIncidents(container) {
     container.innerHTML = `<p class="error">Error loading incidents: ${err.message}</p>`;
   }
 }
+
 
 async function loadSummary(container) {
   container.innerHTML = '<p>Loading summary...</p>';

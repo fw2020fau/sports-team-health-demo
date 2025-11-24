@@ -6,7 +6,6 @@ const cors = require('cors');
 const app = express();
 const PORT = 3001;
 
-
 const FRONTEND_ORIGIN = 'http://127.0.0.1:5500';
 
 app.use(cors({
@@ -30,23 +29,22 @@ app.use(session({
 // demo data
 
 const users = [
-  { id: 1, username: 'trainer1', password: 'trainer1', role: 'trainer', playerId: null },
-  { id: 2, username: 'coach1',   password: 'coach1',   role: 'coach',   playerId: null },
-  { id: 3, username: 'player1',  password: 'player1',  role: 'player',  playerId: 101 },
-  { id: 4, username: 'admin1',   password: 'admin1',   role: 'admin',   playerId: null },
+  { id: 1, username: 'trainer', password: 'trainer', role: 'trainer', playerId: null },
+  { id: 2, username: 'coach',   password: 'coach',   role: 'coach',   playerId: null },
+  { id: 3, username: 'player',  password: 'player',  role: 'player',  playerId: 101 },
+  { id: 4, username: 'admin',   password: 'admin',   role: 'admin',   playerId: null },
 ];
 
 const players = [
-  { id: 101, name: 'John Adams', team: 'Team A', position: 'Forward', status: 'cleared' },
-  { id: 102, name: 'Mike Brown', team: 'Team A', position: 'Guard',   status: 'at risk' },
-  { id: 103, name: 'Alex Green', team: 'Team B', position: 'Goalie',  status: 'needs attention' },
+  { id: 101, name: 'John Adams', team: 'Team A', position: 'Quarterback',   status: 'cleared' },
+  { id: 102, name: 'Mike Brown', team: 'Team A', position: 'Wide Receiver', status: 'at risk' },
+  { id: 103, name: 'Alex Green', team: 'Team A', position: 'Running Back',  status: 'needs attention' },
 ];
 
 let nextIncidentId = 1;
 const incidents = [];
 const vitals = {};
 const fatigueReports = {};
-
 
 function requireLogin(req, res, next) {
   if (!req.session.user) {
@@ -70,7 +68,7 @@ function requireRole(roles) {
 // Auth routes
 
 app.post('/login', (req, res) => {
-  const { username, password } = req.body || {};
+  const { username, password, playerId } = req.body || {};
 
   const user = users.find(
     (u) => u.username === username && u.password === password
@@ -80,14 +78,26 @@ app.post('/login', (req, res) => {
     return res.status(401).json({ error: 'Invalid username or password.' });
   }
 
-  req.session.user = {
+  const sessionUser = {
     id: user.id,
     username: user.username,
     role: user.role,
     playerId: user.playerId,
   };
 
-  res.json({ message: 'Logged in.', user: req.session.user });
+  // allow player to choose which playerId they are
+  if (user.role === 'player' && playerId) {
+    const pid = parseInt(playerId, 10);
+    const playerExists = players.some((p) => p.id === pid);
+    if (!playerExists) {
+      return res.status(400).json({ error: 'Player ID not found.' });
+    }
+    sessionUser.playerId = pid;
+  }
+
+  req.session.user = sessionUser;
+
+  res.json({ message: 'Logged in.', user: sessionUser });
 });
 
 app.get('/session', (req, res) => {
@@ -194,7 +204,7 @@ app.post('/incidents', requireRole(['trainer']), (req, res) => {
     type: type || 'unknown',
     severity: severity || 'low',
     notes: notes || '',
-    createdBy: req.session.user.username,
+    createdBy: player.name,
     createdAt: new Date().toISOString(),
   };
 
@@ -213,13 +223,18 @@ app.post('/players/:id/fatigue', requireRole(['player']), (req, res) => {
   const playerId = parseInt(req.params.id, 10);
   const { level, note } = req.body || {};
 
+  const player = players.find((p) => p.id === playerId);
+  if (!player) {
+    return res.status(404).json({ error: 'Player not found.' });
+  }
+
   if (req.session.user.playerId !== playerId) {
     return res.status(403).json({ error: 'Players can only report their own fatigue.' });
   }
 
   const lvl = Number(level);
   if (Number.isNaN(lvl) || lvl < 1 || lvl > 10) {
-    return res.status(400).json({ error: 'Fatigue level must be 1–10.' });
+    return res.status(400).json({ error: 'Fatigue level must be 1-10.' });
   }
 
   if (!fatigueReports[playerId]) {
@@ -233,6 +248,18 @@ app.post('/players/:id/fatigue', requireRole(['player']), (req, res) => {
   };
 
   fatigueReports[playerId].push(report);
+
+  const fatigueIncident = {
+    id: nextIncidentId++,
+    playerId,
+    type: 'Fatigue report',
+    severity: lvl >= 8 ? 'high' : lvl >= 5 ? 'moderate' : 'low',
+    notes: `Level ${lvl}/10${report.note ? ` - ${report.note}` : ''}`,
+    createdBy: player.name,
+    createdAt: report.reportedAt,
+  };
+  incidents.push(fatigueIncident);
+
   res.status(201).json(report);
 });
 
@@ -320,7 +347,7 @@ app.post('/admin/players', requireRole(['admin']), (req, res) => {
   const player = {
     id: newId,
     name,
-    team: team || 'Unassigned',
+    team: team || 'Team A',
     position: position || 'Unknown',
     status: status || 'cleared',
   };
