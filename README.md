@@ -117,29 +117,20 @@ PATCH  /admin/users/:id/role
 
 ---
 
-## ☁️ Cloud Deployment (Render)
+## ☁️ Cloud Deployment
 
-### 1. Push code to GitHub
+The application is deployed and accessible at:
 
-Repository root must contain:
+**Live URL:** https://sports-team-health-demo.onrender.com/
 
-```
-index.html
-script.js
-styles.css
-server.js
-package.json
-package-lock.json
-README.md
-```
+### Deployment Details
 
-### 2. Deploy on Render
+- **Platform:** Render Web Service  
+- **Environment:** Node.js  
+- **Build Command:** `npm install`  
+- **Start Command:** `npm start`  
 
-- Environment: **Node**  
-- Build Command: `npm install`  
-- Start Command: `npm start`  
-
-Render will provide a public URL for instructor access.
+The application serves both the backend API and frontend files from a single deployment.
 
 ---
 
@@ -176,4 +167,4 @@ This project demonstrates:
 - REST API development  
 - Session authentication  
 - Role-based permissions  
-- Practical software engineering concepts  
+- Practical software engineering concepts
