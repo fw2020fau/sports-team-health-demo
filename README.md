@@ -44,9 +44,11 @@ Data is stored in memory (demo requirement). When the server restarts, data rese
 ## 🔧 Tech Stack
 
 - **Node.js + Express** (backend + API)
-- **HTML/CSS/Vanilla JS** (frontend UI)
-- **express-session** authentication
-- **In-memory data storage** (demo)
+- **HTML / CSS / Vanilla JavaScript** (frontend UI)
+- **express-session** (session-based authentication)
+- **CORS** (frontend–backend communication)
+- **In-memory data storage** (demo, resets on server restart)
+- **Render Web Service** (cloud hosting for the entire app)
 
 Everything runs inside **one project directory**.
 
@@ -83,7 +85,7 @@ http://localhost:3001
 |------|----------|----------|-------|
 | Trainer | trainer | trainer | Full access |
 | Coach | coach | coach | View-only |
-| Player | player | player | Use Player ID 101 |
+| Player | player | player | Enter Player ID: Ex. 101 |
 | Admin | admin | admin | Manage players/users |
 
 ---
