@@ -146,7 +146,7 @@ Render will provide a public URL for instructor access.
 ## 📁 Project Structure
 
 ```
-projectroot/
+sports-team-health-demo/
 │── index.html
 │── script.js
 │── styles.css
